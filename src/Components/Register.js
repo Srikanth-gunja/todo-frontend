@@ -78,6 +78,7 @@ const Register = () => {
       ></input>
       <br />
       <input
+      type='email'
         placeholder='Email'
         value={data.email}
         name='email'
