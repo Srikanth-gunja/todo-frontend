@@ -3,13 +3,14 @@ import { Link ,useNavigate} from 'react-router-dom';
 // Import a separate CSS file for styling
 import './Register.css'
 import axios from 'axios';
-
+import LoadingPopup from './LoadingPopup';
 
 const url = "https://todo-backend-hbc4.onrender.com/api/user/register";
 
 const Register = () => {
     const navigate=useNavigate();
  const [error, setError] = useState('');
+ const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     username: '',
     email: '',
@@ -28,7 +29,7 @@ const Register = () => {
 
     try{
       if (data.username !== '' && data.email !== '' && data.password !== '') {
-      console.log(data);
+        setLoading(true);
       // Redirect to the login page after successful signup
       //history.push('/');
       const res=await axios.post(url,data);
@@ -51,12 +52,16 @@ const Register = () => {
         setError(err.response.data.msg);
       }
     }
+    finally{
+      setLoading(false);
+    }
     
 
   };
 
   return (
     <div className="register-container">
+    {loading && <LoadingPopup />} 
     <form onSubmit={handleSubmit} className="register-form">
      <div className="error-message">
         {error && (
