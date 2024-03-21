@@ -29,6 +29,10 @@ const Register = () => {
 
     try{
       if (data.username !== '' && data.email !== '' && data.password !== '') {
+      if(data.password.length <8){
+        setError('password should 8 chars long')
+        return;
+      }
         setLoading(true);
       // Redirect to the login page after successful signup
       //history.push('/');
@@ -78,7 +82,7 @@ const Register = () => {
       ></input>
       <br />
       <input
-      type='email'
+        type='email'
         placeholder='Email'
         value={data.email}
         name='email'
