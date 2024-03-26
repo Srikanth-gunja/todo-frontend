@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
-import './Todo.css'; // Import the CSS file
+import './Todo.css'; 
 import axios from 'axios';
 import LoadingPopup from './LoadingPopup';
 
@@ -71,9 +71,7 @@ const Todo = () => {
   };
 
   const handleLogout = () => {
-    // Perform any logout-related actions here
-
-    // Navigate to the login page
+  
     navigate('/login');
   };
 
