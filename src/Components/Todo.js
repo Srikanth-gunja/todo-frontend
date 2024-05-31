@@ -104,9 +104,7 @@ const Todo = () => {
   };
 
   const handleLogout = () => {
-    // Perform any logout-related actions here
-
-    // Navigate to the login page
+  
     navigate('/login');
   };
 
