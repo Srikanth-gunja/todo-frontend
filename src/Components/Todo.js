@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faPlus, faEdit } from '@fortawesome/free-solid-svg-icons';
 import './Todo.css'; // Import the CSS file
 import axios from 'axios';
 import LoadingPopup from './LoadingPopup';
 
 const url = 'https://todo-backend-hbc4.onrender.com/api/todo';
+//const url = 'http://localhost:9000/api/todo';
 
 const Todo = () => {
   const location = useLocation();
@@ -16,6 +17,8 @@ const Todo = () => {
   const [loading, setLoading] = useState(false);
   const [newTodo, setNewTodo] = useState('');
   const [todos, setTodos] = useState([]);
+  const [editTodoId, setEditTodoId] = useState(null);
+  const [editTodoText, setEditTodoText] = useState('');
 
   useEffect(() => {
     if (!token) {
@@ -70,6 +73,36 @@ const Todo = () => {
     }
   };
 
+  const handleEditClick = (todoId, currentText) => {
+    setEditTodoId(todoId);
+    setEditTodoText(currentText);
+  };
+
+  const handleEditSave = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.put(
+        `${url}/${editTodoId}`,
+        { text: editTodoText },
+        { headers: { 'x-token': token } }
+      );
+      if (res.status === 200) {
+        setEditTodoId(null);
+        setEditTodoText('');
+        fetchTodos();
+      }
+    } catch (err) {
+      console.error('Error updating todo:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditTodoId(null);
+    setEditTodoText('');
+  };
+
   const handleLogout = () => {
     // Perform any logout-related actions here
 
@@ -101,19 +134,69 @@ const Todo = () => {
         {todos.map((item) => (
           <div key={item._id} className="todo-item">
             <div className="todo-text">
-              <p>{item.text}</p>
+              {editTodoId === item._id ? (
+                <input
+                  value={editTodoText}
+                  onChange={(e) => setEditTodoText(e.target.value)}
+                  className="input-field"
+                />
+              ) : (
+                <p>{item.text}</p>
+              )}
             </div>
-            <button
-              onClick={() => handleDelete(item._id)}
-              style={{
-                marginLeft: '10px',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              <FontAwesomeIcon icon={faTrashAlt} color="red" />
-            </button>
+            {editTodoId === item._id ? (
+              <>
+                <button
+                  onClick={handleEditSave}
+                  className="save-button"
+                  style={{
+                    marginLeft: '10px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Save
+                </button>
+                <button
+                  onClick={handleEditCancel}
+                  className="cancel-button"
+                  style={{
+                    marginLeft: '10px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => handleEditClick(item._id, item.text)}
+                  style={{
+                    marginLeft: '10px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEdit} color="blue" />
+                </button>
+                <button
+                  onClick={() => handleDelete(item._id)}
+                  style={{
+                    marginLeft: '10px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrashAlt} color="red" />
+                </button>
+              </>
+            )}
           </div>
         ))}
       </div>
